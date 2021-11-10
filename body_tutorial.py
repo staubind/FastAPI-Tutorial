@@ -1,6 +1,6 @@
 # uses Pydantic. May be worth looking into deeper: https://pydantic-docs.helpmanual.io/
 from fastapi import FastAPI, Query
-from typing import Optional
+from typing import Optional, List
 from pydantic import BaseModel
 
 class Item(BaseModel):
@@ -49,10 +49,59 @@ async def check_working():
 
 # we can even add regex for parameters
 @app.get("/items/")
-async def read_items(q: Optional[str] = Query(None, min_length=3, max_length=50), regex="^fixedquery$"): # recall, using None implies it is optional Optional is purely for the editor
+async def read_items(q: str = Query("fixedquery", min_length=3, max_length=50), regex="^fixedquery$"): # recall, using None implies it is optional Optional is purely for the editor
     # first param to Query sets default value, second sets constraint
     # also explicity defines it as a query param, rather than a path param
     results = {"items": [{"item_id": "Foo"}, {"item_id": "Bar"}]}
     if q:
         results.update({"q": q})
     return results
+
+# if you need to use Query and want it to be required (not have a default value)
+@app.get("/item/")
+async def read_items(q: str = Query(..., min_length=3, max_length=50), regex="^fixedquery$"): # recall, using None implies it is optional Optional is purely for the editor
+    # first param to Query sets default value, second sets constraint
+    # also explicity defines it as a query param, rather than a path param
+    results = {"items": [{"item_id": "Foo"}, {"item_id": "Bar"}]}
+    if q:
+        results.update({"q": q})
+    return results
+
+@app.get("/itemss/")
+async def read_items(q: Optional[List[str]] = Query(None)):
+    # note that you must use Query explicity with list otherwise it interprets it as the body of the request
+    print(q)
+    query_items = {"q": q}
+    return query_items
+
+@app.get("/items/")
+async def read_items(q: list = Query([])):
+    # in this case the contents of the list will not be observed
+    query_items = {"q": q}
+    return query_items
+
+
+# DECLARING METADATA
+@app.get("/idems/")
+async def read_idems(
+    q: Optional[str] = Query(None, 
+        title = "Query string", 
+        min_length=3,
+        description = "Query string for the items to search in the database that have a good match.")
+):
+    results = {"items": [{"item_id": "Foo"}, {"item_id": "Bar"}]}
+    if q:
+        results.update({"q": q})
+    return results
+
+# Using Aliases for variable names:
+@app.get("/itemsss/")
+async def read_itemsss(
+    q: Optional[str] = Query(None, alias="item-query", deprecated=True,) # using deprecated=True allows it to show that it's being deprecated in future releases
+    # this way q will be the actual variable name used for the query parameter "item-query"
+):
+    results = {"items": [{"item_id": "Bar"}, {"item_id": "Bar"}]}
+    if q:
+        results.update({"q": q})
+    return results
+
