@@ -60,6 +60,7 @@ async def read_items(q: str = Query("fixedquery", min_length=3, max_length=50), 
 # if you need to use Query and want it to be required (not have a default value)
 @app.get("/item/")
 async def read_items(q: str = Query(..., min_length=3, max_length=50), regex="^fixedquery$"): # recall, using None implies it is optional Optional is purely for the editor
+    # using ... for first param makes it required
     # first param to Query sets default value, second sets constraint
     # also explicity defines it as a query param, rather than a path param
     results = {"items": [{"item_id": "Foo"}, {"item_id": "Bar"}]}
