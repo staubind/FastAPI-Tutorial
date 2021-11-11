@@ -41,7 +41,7 @@ class User(BaseModel):
     fullname: Optional[str] = None
 
 # in this case it will interpret both 
-@app.put("/items/{item_id}")
+@app.put("/itemss/{item_id}")
 # singular parameters are defaulted to Query, so if you want a singular value in the body, use Body
 async def update_item(item_id: int, item: Item, user: User, importance: int = Body(...)): 
     results = {"item_id": item_id, "item": item, "user": user, "importance": importance}
@@ -62,7 +62,7 @@ async def update_item(item_id: int, item: Item, user: User, importance: int = Bo
 # }
 
 #multiple
-@app.put("/items/{item_id}")
+@app.put("/itemsss/{item_id}")
 # singular parameters are defaulted to Query, so if you want a singular value in the body, use Body
 async def update_item(
     *,
@@ -102,10 +102,10 @@ async def update_item(
 class SingleItem(BaseModel):
     name: str
     description: Optional[str] = None
-    price: float
-    tax: Optional[float] = None
+    robot: bool
+    tax_collector: Optional[bool] = None
 
-@app.put("/items/{item_id}")
+@app.put("/itemssss/{item_id}")
 async def update_item(item_id: int, item: SingleItem = Body(..., embed=True)):
     results = {"item_id": item_id, "item": item}
     return results
@@ -127,3 +127,18 @@ async def update_item(item_id: int, item: SingleItem = Body(..., embed=True)):
 # }
 # note that one is couched in an item, where the other expects a flat object
 
+
+
+# so in short, if you have multiple pydantic models, it will expect them layered in JSON
+
+# test:
+@app.post('/multiple-items/')
+async def post_multiple_items(
+    item: Item,
+    single_item: SingleItem,
+    user: User,
+    body_param: int = Body(..., gt=10),
+    query_param: int = 10
+):
+    result = {"item": item, "single_item": single_item, "user": user, "body_param": body_param, "query_param": query_param}
+    return result
