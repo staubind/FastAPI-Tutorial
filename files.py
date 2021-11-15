@@ -12,7 +12,7 @@ async def create_files(files: List[bytes] = File(...)): # File inherits from For
     return {"file_sizes": [len(file) for file in files]}
 # whole file contents will be stored in memory - fine for small sizes
 
-@app.post("/upload/") # upload spools the file - if it fills memory it slides to disk
+@app.post("/uploadfiles/") # upload spools the file - if it fills memory it slides to disk
 async def create_upload_file(files: List[UploadFile] = File(...)): # files are uploaded as form data
     # UploadFiles have standard async await methods that a python file object has
     # When you use the async methods, FastAPI runs the file methods in a threadpool and awaits for them.
