@@ -59,3 +59,8 @@ async def read_users(commons: dict = Depends(common_parameters)):
 # services
 # injectables
 # components
+
+# key feature is that they're callable
+# classes are callable, for example
+
+
