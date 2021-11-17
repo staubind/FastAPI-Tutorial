@@ -1,4 +1,5 @@
 from datetime import date, datetime, timedelta
+from os import access
 from typing import Optional
 
 from fastapi import Depends, FastAPI, HTTPException, status
@@ -109,8 +110,10 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
         )
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
-        data={"sub": user.username}, expires_delta=access_token_expires
-    )
+        data={"sub": user.username}, expires_delta=access_token_expires # sub should be a unique id across the app
+    ) # jwt's can be given to other things than users - car or a bot or a blog.
+    # then you could allow that 'object' to take certain actions
+    print('access_token is: ', access_token)
     return {"access_token": access_token, "token_type": "bearer"}
 
 @app.get("/users/me/", response_model=User)
