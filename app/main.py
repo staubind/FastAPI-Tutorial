@@ -1,8 +1,7 @@
 from fastapi import Depends, FastAPI
-import fastapi
-from .dependencies import get_query_token, get_token_header
-from .internal import admin
-from .routers import items, users
+from dependencies import get_query_token, get_token_header
+from internal import admin
+from routers import items, users
 
 app = FastAPI(dependencies=[Depends(get_query_token)])
 
@@ -19,4 +18,4 @@ app.include_router(
 @app.get("/")
 async def root():
     return {"Message": "Hello Bigger Applications!"}
-
+# you can also put another router inside another router
