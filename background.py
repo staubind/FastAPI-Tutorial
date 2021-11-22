@@ -11,7 +11,7 @@ def write_notification(email: str, message=""):
 def get_query(background_tasks: BackgroundTasks, q: Optional[str] = None):
     if q:
         message = f'found query: {q}\n'
-        background_tasks.add_task(write_log, message)
+        background_tasks.add_task(write_notification, message)
     return q
 
 @app.post("/send-notification/{email}")
